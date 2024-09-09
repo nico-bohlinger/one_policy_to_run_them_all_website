@@ -1,39 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>MuJoCo Demo</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <meta name="application-name"   content="mujoco_wasm">
-        <meta name="description"        content="MuJoCo Testbed">
-        <meta name="keywords"           content="MuJoCo">
-        <meta name="author"             content="zalo">
-        <meta name="viewport"           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no, shrink-to-fit=0">
-        <meta name="theme-color"        content="#ffffff">
-        <link rel ="icon" type="image/x-icon" href="./examples/favicon.png">
+        <title>One Policy to Run Them All</title>
+        <link rel="stylesheet" href="custom.css">
     </head>
 
-    <body style="margin:0px; background-color:rgb(255, 255, 255); overflow:hidden; position:fixed; min-height: 100%;
-                 touch-action: none;
-                 -webkit-touch-callout: none; /* iOS Safari */
-                 -webkit-user-select: none; /* Safari */
-                 -khtml-user-select: none; /* Konqueror HTML */
-                 -moz-user-select: none; /* Old versions of Firefox */
-                 -ms-user-select: none; /* Internet Explorer/Edge */
-                 user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */">
-        <h1 hidden></h1> <!-- Puts the Lighthouse Score over 90 heheh-->
+    <body>
+        <h1 hidden></h1>
 
-		<!-- Import maps polyfill -->
+        <script src="https://kit.fontawesome.com/02e2ed10b8.js" crossorigin="anonymous"></script>
 		<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
-
-        <!-- Allows three.js Examples to work without building -->
         <script type="importmap">
             { "imports": { "three": "./node_modules/three/build/three.module.js", "three/addons/": "./node_modules/three/examples/jsm/"} }
         </script>
+        <script type="module" src="script.js"></script>
 
-        <div id="appbody" style="position: absolute;">
-            <!--<div id="error"></div>
-            <script type="module" src="./examples/Debug.js"></script>-->
-            <script type="module" src="./examples/main.js"></script>
+        <div>
+            <div id="title-container">
+                <p id="paper-title">
+                    One Policy to Run Them All: an End-to-end Learning<br>Approach to Multi-Embodiment Locomotion
+                </p>
+                <div id="authors">
+                    <a class="author" href="https://www.ias.informatik.tu-darmstadt.de/Team/NicoBohlinger" target="_blank">Nico Bohlinger<sup>1</sup></a>
+                    <a class="author" href="https://ideas-ncbr.pl/osoby/grzegorz-czechmanowski/" target="_blank">Grzegorz Czechmanowski<sup>2</sup></a>
+                    <a class="author" href="https://openreview.net/profile?id=~Maciej_Piotr_Krupka1" target="_blank">Maciej Krupka<sup>2</sup></a>
+                    <a class="author" href="https://ideas-ncbr.pl/en/osoby/piotr-kicki/" target="_blank">Piotr Kicki<sup>2</sup></a>
+                    <a class="author" href="https://ideas-ncbr.pl/osoby/krzysztof-walas/" target="_blank">Krzysztof Walas<sup>2</sup></a>
+                    <a class="author" href="https://www.ias.informatik.tu-darmstadt.de/Team/JanPeters" target="_blank">Jan Peters<sup>1</sup></a>
+                    <a class="author" href="https://www.ias.informatik.tu-darmstadt.de/Team/DavideTateo" target="_blank">Davide Tateo<sup>1</sup></a>
+                </div>
+                <div id="affiliations">
+                    <p class="affiliation"><sup>1</sup>Technical University of Darmstadt</p>
+                    <p class="affiliation"><sup>2</sup>Poznan University of Technology</p>
+                </div>
+
+                <p id="conference-name">Conference on Robot Learning (CoRL) 2024</p>
+            </div>
+
+            <div id="social-buttons">
+                <a href="https://github.com/nico-bohlinger/one_policy_to_run_them_all" target="_blank" class="social-button">
+                    <i class="fa fa-github"></i>
+                    <p>GitHub</p>
+                </a>
+                <a href="https://www.ias.informatik.tu-darmstadt.de/uploads/Team/NicoBohlinger/one_policy_to_run_them_all.pdf" target="_blank" class="social-button">
+                    <i class="fa fa-file-pdf"></i>
+                    <p>Paper</p>
+                </a>
+            </div>
+
+            <div id="tldr-container">
+                <p id="tldr-text"><span id="tldr-first">TLDR:</span> We propose the Unified Robot Morpholgy Architecture (URMA) that can learn a single general locomotion policy for any legged robot embodiment and morphology.</p>
+            </div>
+            
+            <div class="section-container">
+                <p class="section-header">Interactive Simulation</p>
+                <p class="section-text">
+                    Test our multi-embodiment policy trained with URMA on 16 robots interactively in the browser.
+                </p>
+            </div>
+            <div id="canvas-container"></div>
+
+            <div class="section-container">
+                <p class="section-header">Unified Robot Morpholgy Architecture</p>
+                <p class="section-text">
+                    URMA splits the observations of a robot into joint, foot and general parts, encodes them with a simple attention encoder with a learnable temperature, and uses an universal morphology decoder to obtain the actions for every joint of the robot.
+                </p>
+                <img src="images/architecture.png" alt="URMA architecture" class="section-image">
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Deployment on Robots from the Training Set</p>
+                <p class="section-text">
+                    After training on 16 robots in simulation with extensive domain randomization, the policy is deployed on two of them in the real world.
+                </p>
+                <video controls class="section-video">
+                    <source src="videos/real_world_seen_robots.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Deployment on Unseen Robots</p>
+                <p class="section-text">
+                    Because of the big variety of robots in the training set, the randomization of their properties and the morphology-agnostic URMA architecture, the policy can generalize to real robots not seen during prior the simulation training.
+                </p>
+                <video controls class="section-video">
+                    <source src="videos/real_world_unseen_robots.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Acknowledgments</p>
+                <p class="section-text">
+                    This project was funded by National Science Centre, Poland under the OPUS call in the Weave programme UMO-2021/43/I/ST6/02711, and by the German Science Foundation (DFG) under grant number PE 2315/17-1. Part of the calculations were conducted on the Lichtenberg high performance computer at TU Darmstadt.
+                </p>
+            </div>
+            
+            <div id="website-inspiration">
+                <p>This website was inspired by <a href="https://kzakka.com/robopianist/">Kevin Zakka's</a> and <a href="https://brentyi.github.io/tilted/">Brent Yi's</a>.</p>
+            </div>
         </div>
     </body>
 </html>

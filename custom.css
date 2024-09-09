@@ -1,0 +1,172 @@
+body{
+    font-family: 'Open Sans', sans-serif;
+    max-width: 50em;
+    margin: 0 auto;
+    color: #333;
+    background-color: white;
+}
+
+p {
+    margin: 0;
+}
+
+#title-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2em;
+}
+
+#paper-title {
+    font-family: 'Lato', sans-serif;
+    font-size: xx-large;
+    font-weight: bold;
+    text-align: center;
+}
+
+#authors{
+    margin-top: 1em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.author {
+    margin-right: 0.6em;
+    font-weight: 600;
+    color: #666;
+    font-size: large;
+    text-decoration: none;
+}
+
+.author:hover {
+    text-decoration: underline;
+}
+
+#authors .author:last-child {
+    margin-right: 0;
+}
+
+.author sup {
+    font-size: small;
+    font-weight: normal;
+    color: #999;
+}
+
+#affiliations {
+    margin-top: 1em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.affiliation {
+    margin-right: 0.6em;
+    font-size: medium;
+    color: #333;
+}
+
+#affiliations .affiliation:last-child {
+    margin-right: 0;
+}
+
+.affiliation sup {
+    font-size: small;
+    font-weight: normal;
+    color: #999;
+}
+
+#conference-name {
+    margin-top: 1em;
+    font-size: medium;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+#social-buttons {
+    margin-top: 2em;
+    display: flex;
+    justify-content: center;
+}
+
+.social-button {
+    margin-right: 1.6em;
+    font-size: medium;
+    color: #333;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    border: 1px solid #333;
+    padding: 0.3em 1.6em;
+    border-radius: 0.6em;
+    cursor: pointer;
+}
+
+.social-button:last-child {
+    margin-right: 0;
+}
+
+.social-button i {
+    margin-right: 0.4em;
+}
+
+#tldr-container {
+    margin-top: 2em;
+    text-align: center;
+    font-style: italic;
+}
+
+#tldr-first {
+    font-weight: bold;
+}
+
+.section-container {
+    margin-top: 3em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.section-header {
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.section-text {
+    margin-top: 1em;
+}
+
+.section-image {
+    margin-top: 1em;
+    max-width: 100%;
+}
+
+.section-video {
+    margin-top: 1em;
+    max-width: 100%;
+}
+
+#canvas-container {
+    margin-top: 1em;
+    display: flex;
+    justify-content: space-evenly;
+    position: relative;
+}
+
+.lil-gui.root.autoPlace {
+    position: absolute;
+    right: 0px;
+}
+
+#website-inspiration {
+    margin-top: 3em;
+    text-align: center;
+    margin-bottom: 3em;
+    font-size: small;
+}
+
+#website-inspiration a {
+    color: #333;
+}
