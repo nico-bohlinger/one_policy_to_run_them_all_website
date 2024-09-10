@@ -153,6 +153,11 @@ p {
     display: flex;
     justify-content: space-evenly;
     position: relative;
+    width: min(800px, 100vw);
+    height: 500px;
+    background-color: rgb(235, 236, 225);
+    align-items: center;
+    font-size: xx-large;
 }
 
 .lil-gui.root.autoPlace {

@@ -10,6 +10,7 @@
 
         <script src="https://kit.fontawesome.com/02e2ed10b8.js" crossorigin="anonymous"></script>
 		<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
         <script type="importmap">
             { "imports": { "three": "./node_modules/three/build/three.module.js", "three/addons/": "./node_modules/three/examples/jsm/"} }
         </script>
@@ -58,7 +59,9 @@
                     Test our multi-embodiment policy trained with URMA on 16 robots interactively in the browser.
                 </p>
             </div>
-            <div id="canvas-container"></div>
+            <div id="canvas-container">
+                Loading...
+            </div>
 
             <div class="section-container">
                 <p class="section-header">Unified Robot Morpholgy Architecture</p>

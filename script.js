@@ -1,25 +1,27 @@
 import * as THREE from 'three';
 import { GUI } from './node_modules/three/examples/jsm/libs/lil-gui.module.min.js';
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
-import { setupGUI, loadSceneFromURL, getPosition, getQuaternion } from './mujocoUtils.js';
+import { setupGUI, loadSceneFromURL, downloadRobotsFolder, getPosition, getQuaternion } from './mujocoUtils.js';
+import { create_robot_action_handlers } from './robot_action_handlers.js';
 import load_mujoco from "./mujoco_wasm/mujoco_wasm.js";
 
 // Load the MuJoCo Module
 const mujoco = await load_mujoco();
 
-var initialScene = "humanoid.xml";
+var initialScene = "unitree_a1/unitree_a1.xml";
 
 // Set up Emscripten's Virtual File System
 mujoco.FS.mkdir('/working');
 mujoco.FS.mount(mujoco.MEMFS, { root: '.' }, '/working');
-mujoco.FS.writeFile("/working/" + initialScene, await(await fetch("robots/" + initialScene)).text());
+await downloadRobotsFolder(mujoco);
+var robot_action_handlers = create_robot_action_handlers();
 
 
 export class MuJoCoApp {
     constructor() {
         this.mujoco = mujoco;
 
-        this.model = new mujoco.Model("/working/humanoid.xml");
+        this.model = new mujoco.Model("/working/" + initialScene);
         this.state = new mujoco.State(this.model);
         this.simulation = new mujoco.Simulation(this.model, this.state);
 
@@ -58,6 +60,7 @@ export class MuJoCoApp {
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
         this.renderer.setAnimationLoop( this.render.bind(this) );
 
+        this.container.innerHTML = "";
         this.container.appendChild( this.renderer.domElement );
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -68,6 +71,8 @@ export class MuJoCoApp {
         this.controls.dampingFactor = 0.10;
         this.controls.screenSpacePanning = true;
         this.controls.update();
+
+        this.previous_scene = initialScene;
 
         window.addEventListener('resize', this.onWindowResize.bind(this));
     }
@@ -91,9 +96,22 @@ export class MuJoCoApp {
         this.controls.update();
 
         if (!this.params["paused"]) {
-            let timestep = this.model.getOptions().timestep;
+            let scene = this.params["scene"];
+            let robot_action_handler = robot_action_handlers[scene];
+
+            if (scene != this.previous_scene) {
+                robot_action_handler.reset();
+                this.previous_scene = scene;
+            }
+
+            robot_action_handler.action(this.simulation, this.model);
+
+            let timestep = this.model.getOptions().timestep * 4;
             if (timeMS - this.mujoco_time > 35.0) { this.mujoco_time = timeMS; }
             while (this.mujoco_time < timeMS) {
+                this.simulation.step();
+                this.simulation.step();
+                this.simulation.step();
                 this.simulation.step();
                 this.mujoco_time += timestep * 1000.0;
             }

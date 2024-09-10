@@ -4,13 +4,14 @@
   "description": "",
   "main": "mujocoUtils.js",
   "dependencies": {
+    "@tensorflow/tfjs-node": "^4.21.0",
     "three": "^0.150.1"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {}
 }
