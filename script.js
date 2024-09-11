@@ -104,7 +104,9 @@ export class MuJoCoApp {
                 this.previous_scene = scene;
             }
 
-            robot_action_handler.action(this.simulation, this.model);
+            tf.tidy(() => {
+                robot_action_handler.action(this.simulation, this.model);
+            });
 
             let timestep = this.model.getOptions().timestep * 4;
             if (timeMS - this.mujoco_time > 35.0) { this.mujoco_time = timeMS; }

@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { policy } from './policy.js';
 
 
@@ -95,10 +96,11 @@ class UnitreeA1 {
             [4, 10]
         );
 
-        this.general_policy_state_second_part = tf.tensor1d(
+        this.general_policy_state_second_part = new Float32Array(
             [-1.6791492,   1.3333712,  -1.3550704,  -1.1994606, 0.5170822,   1.0184087,  -0.6686805,   0.54012716],
         );
 
+        this.action_dt = 0.02
         this.p_gain = 20.0;
         this.d_gain = 0.5;
         this.scaling_factor = 0.25;
@@ -106,34 +108,60 @@ class UnitreeA1 {
         this.foot_indices = [19, 29, 39, 49];
         this.foot_contact_threshold = 0.015;
         this.previous_action = new Float32Array(12);
+        this.feet_contact_times = new Float32Array(4);
     }
 
     action(simulation, model) {
         let qpos = simulation.qpos;
         let qvel = simulation.qvel;
-
         let dynamic_joint_observations = []
         for (let i = 0; i < model.nu; i++) {
-            dynamic_joint_observations.push([qpos[7 + i], qvel[6 + i], this.previous_action[i]]);
+            dynamic_joint_observations.push([
+              (qpos[7 + i] - this.nominal_position[i]) / 4.6,
+              qvel[6 + i] / 35.0,
+              this.previous_action[i] / 10.0
+            ]);
         }
         let dynamic_joint_observations_tf = tf.tensor2d(dynamic_joint_observations, [model.nu, 3]);
 
-        let dynamic_foot_observations_tf = tf.tensor1d([0.0,]);
         let z_pos_all_geoms = simulation.geom_xpos.filter((_, i) => i % 3 == 2)
         let foot_z_pos = this.foot_indices.map(i => z_pos_all_geoms[i]);
         let foot_contacts = foot_z_pos.map(z => z < this.foot_contact_threshold ? 1.0 : 0.0);
-        // TODO: calculate foot contact time
-        // TODO: Make sure everything is in right foot order
-        // TODO: Create the tf
+        this.feet_contact_times = this.feet_contact_times.map((t, i) => foot_contacts[i] == 1 ? t + this.action_dt : 0.0);
+        let dynamic_foot_observations = []
+        for (let i = 0; i < 4; i++) {
+          dynamic_foot_observations.push([
+            (foot_contacts[i] / 0.5) - 1.0,
+            Math.min(Math.max((this.feet_contact_times[i] / (5.0 / 2)) - 1.0, -1.0), 1.0)
+          ]);
+        }
+        let dynamic_foot_observations_tf = tf.tensor2d(dynamic_foot_observations, [4, 2]);
 
-        let general_state_tf = tf.tensor1d([0.0,]);
+        let quat = new THREE.Quaternion(qpos[4], qpos[5], qpos[6], qpos[3]);
+        let inverse_quat = quat.invert();
+        let global_trunk_linear_velocity = new THREE.Vector3(qvel[0], qvel[1], qvel[2]);
+        let trunk_linear_velocity_three = global_trunk_linear_velocity.applyQuaternion(inverse_quat);
+        let trunk_linear_velocity = new Float32Array([trunk_linear_velocity_three.x, trunk_linear_velocity_three.y, trunk_linear_velocity_three.z]);
+        for (let i = 0; i < 3; i++) {
+          trunk_linear_velocity[i] = Math.min(Math.max(trunk_linear_velocity[i] / 10.0, -1.0), 1.0);
+        }
+        let trunk_angular_velocity = new Float32Array([qvel[3], qvel[4], qvel[5]]);
+        for (let i = 0; i < 3; i++) {
+          trunk_angular_velocity[i] = Math.min(Math.max(trunk_angular_velocity[i] / 50.0, -1.0), 1.0);
+        }
+        let goal_velocity = new Float32Array([1.0, 0.0, 0.0]);
+        let gravity_vector = new THREE.Vector3(0.0, 0.0, -1.0);
+        let projected_gravity_vector_three = gravity_vector.applyQuaternion(inverse_quat);
+        let projected_gravity_vector = new Float32Array([projected_gravity_vector_three.x, projected_gravity_vector_three.y, projected_gravity_vector_three.z]);
+        let general_state_tf = tf.tensor1d([
+          ...trunk_linear_velocity,
+          ...trunk_angular_velocity,
+          ...goal_velocity,
+          ...projected_gravity_vector,
+          ...this.general_policy_state_second_part
+        ]);
 
-        // TODO: Normalize and clip
-
-        let action = tf.tidy(() => {
-            return policy(this.dynamic_joint_description, dynamic_joint_observations_tf, this.dynamic_foot_description, dynamic_foot_observations_tf, general_state_tf);
-        })
-        let nn_action = new Float32Array(model.nu);
+        let nn_action = policy(this.dynamic_joint_description, dynamic_joint_observations_tf, this.dynamic_foot_description, dynamic_foot_observations_tf, general_state_tf).dataSync();
 
         for (let i = 0; i < model.nu; i++) {
             let scaled_action = this.scaling_factor * nn_action[i];
@@ -146,6 +174,7 @@ class UnitreeA1 {
 
     reset() {
         this.previous_action.fill(0.0);
+        this.feet_contact_times.fill(0.0);
     }
 }
 
