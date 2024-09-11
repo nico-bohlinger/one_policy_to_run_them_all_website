@@ -67,10 +67,10 @@
   </asset>
 
   <worldbody>
-    <geom name="floor" size="0 0 .125" type="plane" material="grid" condim="3"/>
+    <geom name="floor" size="0 0 .125" type="plane" material="grid" condim="3" rgba="0.9 0.9 0.9 1"/>
 
     <light cutoff="100" diffuse="1 1 1" dir="-0 0 -1.3" directional="true" exponent="1" pos="0 0 1.3" specular=".1 .1 .1" castshadow="false"/>
-    <light name="spotlight" mode="targetbodycom" target="trunk" pos="0 -1 2"/>
+    <light name="spotlight" mode="targetbodycom" target="trunk" pos="0 0 15"/>
     <body name="trunk" pos="0 0 0" childclass="a1">
       <camera name="track" mode="trackcom" pos="0 -2 0" xyaxes="1 0 0 0 0 1"/>
       <freejoint/>

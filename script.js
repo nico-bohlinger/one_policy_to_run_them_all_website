@@ -43,7 +43,7 @@ export class MuJoCoApp {
 
         this.camera = new THREE.PerspectiveCamera( 45, width / height, 0.001, 100 );
         this.camera.name = 'PerspectiveCamera';
-        this.camera.position.set(2.0, 1.7, 1.7);
+        this.camera.position.set(0.0, 1.4, 2.7);
         this.scene.add(this.camera);
 
         this.scene.background = new THREE.Color(0.15, 0.25, 0.35);
@@ -64,7 +64,7 @@ export class MuJoCoApp {
         this.container.appendChild( this.renderer.domElement );
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        this.controls.target.set(0, 0.7, 0);
+        this.controls.target.set(0, 0, 0);
         this.controls.panSpeed = 2;
         this.controls.zoomSpeed = 1;
         this.controls.enableDamping = true;
@@ -96,6 +96,9 @@ export class MuJoCoApp {
         this.controls.update();
 
         if (!this.params["paused"]) {
+            // this.controls.target.set(this.simulation.qpos[0], this.simulation.qpos[1], 0);
+            // this.controls.update();
+
             let scene = this.params["scene"];
             let robot_action_handler = robot_action_handlers[scene];
 

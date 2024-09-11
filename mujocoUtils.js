@@ -20,9 +20,10 @@ export function setupGUI(parentContext) {
   parentContext.updateGUICallbacks.length = 0;
   parentContext.updateGUICallbacks.push((model, simulation, params) => {
   // TODO: Use free camera parameters from MuJoCo
-  parentContext.camera.position.set(2.0, 1.7, 1.7);
-  parentContext.controls.target.set(0, 0.7, 0);
-  parentContext.controls.update(); });
+  parentContext.camera.position.set(0.0, 1.4, 2.7);
+  parentContext.controls.target.set(0, 0, 0);
+  parentContext.controls.update();
+  });
 
   // Add scene selection dropdown.
   let reload = reloadFunc.bind(parentContext);
@@ -81,6 +82,9 @@ export function setupGUI(parentContext) {
   //  When pressed, resets the simulation to the initial state.
   //  Can also be triggered by pressing backspace.
   const resetSimulation = () => {
+    parentContext.camera.position.set(0.0, 1.4, 2.7);
+    parentContext.controls.target.set(0, 0, 0);
+    parentContext.controls.update();
     parentContext.simulation.resetData();
     parentContext.simulation.qpos.set(parentContext.model.key_qpos);
     parentContext.simulation.forward();
@@ -88,6 +92,11 @@ export function setupGUI(parentContext) {
   parentContext.gui.add({reset: () => { resetSimulation(); }}, 'reset').name('Reset');
   document.addEventListener('keydown', (event) => {
     if (event.code === 'Backspace') { resetSimulation(); event.preventDefault(); }});
+
+  // just add some text
+  parentContext.gui.add({text: 'Scroll Wheel'}, 'text').name('Zoom');
+  parentContext.gui.add({text: 'Right Click + Drag'}, 'text').name('Move camera');
+  parentContext.gui.add({text: 'Left Click + Drag'}, 'text').name('Pan camera');
 
   parentContext.gui.open();
 }

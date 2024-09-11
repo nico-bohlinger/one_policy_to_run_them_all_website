@@ -1,45 +1,17 @@
+import { w1, b1, w2, b2, w3, b3, ln_w1, ln_b1, w4, b4, ln_w2, ln_b2, w5, b5, w6, b6, w7, b7, ln_w3, ln_b3, w8, b8, w9, b9, w10, b10, ln_w4, ln_b4, w11, b11, w12, b12, ln_w5, ln_b5, w13, b13 } from './policy_weights.js';
+
+
 const stability_epsilon = 0.00000001;
-const joint_log_softmax_temperature = tf.scalar(1.0);  // TODO:
-const foot_log_softmax_temperature = tf.scalar(1.0);  // TODO:
+const joint_log_softmax_temperature = tf.scalar(-1.8753916025161743);
+const foot_log_softmax_temperature = tf.scalar(-1.5039094686508179);
 const softmax_temperature_min = tf.scalar(0.015);
 const policy_mean_abs_clip = 10.0;
 
-
-const w1 = tf.variable(tf.randomNormal([23, 64]));
-const b1 = tf.variable(tf.randomNormal([64]));
-const dynamic_joint_state_mask_layernorm1 = tf.layers.layerNormalization({epsilon: 1e-6, center: true, scale: true})
-const w2 = tf.variable(tf.randomNormal([64, 64]));
-const b2 = tf.variable(tf.randomNormal([64]));
-const w3 = tf.variable(tf.randomNormal([3, 4]));
-const b3 = tf.variable(tf.randomNormal([4]));
-
-const w4 = tf.variable(tf.randomNormal([10, 64]));
-const b4 = tf.variable(tf.randomNormal([64]));
-const dynamic_foot_state_mask_layernorm1 = tf.layers.layerNormalization({epsilon: 1e-6, center: true, scale: true})
-const w5 = tf.variable(tf.randomNormal([64, 64]));
-const b5 = tf.variable(tf.randomNormal([64]));
-const w6 = tf.variable(tf.randomNormal([2, 4]));
-const b6 = tf.variable(tf.randomNormal([4]));
-
-const w7 = tf.variable(tf.randomNormal([532, 512]));
-const b7 = tf.variable(tf.randomNormal([512]));
-const action_latent_layernorm1 = tf.layers.layerNormalization({epsilon: 1e-6, center: true, scale: true})
-const w8 = tf.variable(tf.randomNormal([512, 256]));
-const b8 = tf.variable(tf.randomNormal([256]));
-const w9 = tf.variable(tf.randomNormal([256, 128]));
-const b9 = tf.variable(tf.randomNormal([128]));
-
-const w10 = tf.variable(tf.randomNormal([23, 128]));
-const b10 = tf.variable(tf.randomNormal([128]));
-const action_description_latent_layernorm1 = tf.layers.layerNormalization({epsilon: 1e-6, center: true, scale: true})
-const w11 = tf.variable(tf.randomNormal([128, 128]));
-const b11 = tf.variable(tf.randomNormal([128]));
-
-const w12 = tf.variable(tf.randomNormal([260, 128]));
-const b12 = tf.variable(tf.randomNormal([128]));
-const policy_mean_layernorm1 = tf.layers.layerNormalization({epsilon: 1e-6, center: true, scale: true})
-const w13 = tf.variable(tf.randomNormal([128, 1]));
-const b13 = tf.variable(tf.randomNormal([1]));
+const dynamic_joint_state_mask_layernorm1 = tf.layers.layerNormalization({epsilon: 1e-6, weights: [ln_w1, ln_b1], center: true, scale: true})
+const dynamic_foot_state_mask_layernorm1 = tf.layers.layerNormalization({epsilon: 1e-6, weights: [ln_w2, ln_b2], center: true, scale: true})
+const action_latent_layernorm1 = tf.layers.layerNormalization({epsilon: 1e-6, weights: [ln_w3, ln_b3], center: true, scale: true})
+const action_description_latent_layernorm1 = tf.layers.layerNormalization({epsilon: 1e-6, weights: [ln_w4, ln_b4], center: true, scale: true})
+const policy_mean_layernorm1 = tf.layers.layerNormalization({epsilon: 1e-6, weights: [ln_w5, ln_b5], center: true, scale: true})
 
 
 function policy(dynamic_joint_description, dynamic_joint_observations, dynamic_foot_description, dynamic_foot_observations, general_state) {
