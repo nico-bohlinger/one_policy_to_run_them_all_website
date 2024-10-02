@@ -25,7 +25,7 @@ export class MuJoCoApp {
         this.state = new mujoco.State(this.model);
         this.simulation = new mujoco.Simulation(this.model, this.state);
 
-        this.params = { scene: initialScene, paused: false };
+        this.params = { scene: initialScene, paused: false, x_goal_velocity: 0.0, y_goal_velocity: 0.0, yaw_goal_velocity: 0.0 };
         this.mujoco_time = 0.0;
         this.bodies  = {}, this.lights = {};
         this.tmpVec  = new THREE.Vector3();
@@ -102,13 +102,17 @@ export class MuJoCoApp {
             let scene = this.params["scene"];
             let robot_action_handler = robot_action_handlers[scene];
 
+            if (!robot_action_handler.is_initialized) {
+                robot_action_handler.init(this.model);
+            }
+
             if (scene != this.previous_scene) {
                 robot_action_handler.reset();
                 this.previous_scene = scene;
             }
 
             tf.tidy(() => {
-                robot_action_handler.action(this.simulation, this.model);
+                robot_action_handler.action(this.simulation, this.model, this.params["x_goal_velocity"], this.params["y_goal_velocity"], this.params["yaw_goal_velocity"]);
             });
 
             let timestep = this.model.getOptions().timestep * 4;

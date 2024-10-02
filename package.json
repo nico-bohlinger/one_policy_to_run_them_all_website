@@ -13,5 +13,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {}
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nico-bohlinger/one_policy_to_run_them_all_website.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nico-bohlinger/one_policy_to_run_them_all_website/issues"
+  },
+  "homepage": "https://github.com/nico-bohlinger/one_policy_to_run_them_all_website#readme"
 }
