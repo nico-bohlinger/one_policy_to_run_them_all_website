@@ -9,7 +9,7 @@ import load_mujoco from "./mujoco_wasm/mujoco_wasm.js";
 // Load the MuJoCo Module
 const mujoco = await load_mujoco();
 
-var initialScene = "unitree_a1/unitree_a1.xml";
+var initialScene = "unitree_h1/unitree_h1.xml";
 
 // Set up Emscripten's Virtual File System
 mujoco.FS.mkdir('/working');

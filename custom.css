@@ -142,6 +142,10 @@ p {
     margin-top: 1em;
 }
 
+.section-text a {
+    color: #333;
+}
+
 .section-image {
     margin-top: 1em;
     max-width: 100%;
