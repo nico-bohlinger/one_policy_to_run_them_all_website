@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Reflector } from './Reflector.js';
+import { default_camera_position, default_camera_target } from './camera_consts.js';
 
 
 export async function reloadFunc() {
@@ -8,6 +9,9 @@ export async function reloadFunc() {
 	[this.model, this.state, this.simulation, this.bodies, this.lights] = await loadSceneFromURL(this.mujoco, this.params.scene, this);
 	this.simulation.qpos.set(this.model.key_qpos);
 	this.simulation.forward();
+	this.params.x_goal_velocity = 0.7;
+	this.params.y_goal_velocity = 0.0;
+	this.params.yaw_goal_velocity = 0.0;
 	for (let i = 0; i < this.updateGUICallbacks.length; i++) {
 		this.updateGUICallbacks[i](this.model, this.simulation, this.params);
 	}
@@ -19,9 +23,12 @@ export function setupGUI(parentContext) {
 	parentContext.updateGUICallbacks.length = 0;
 	parentContext.updateGUICallbacks.push((model, simulation, params) => {
 		// TODO: Use free camera parameters from MuJoCo
-		parentContext.camera.position.set(0.0, 1.4, 2.7);
-		parentContext.controls.target.set(0, 0, 0);
+		parentContext.camera.position.set(default_camera_position.x, default_camera_position.y, default_camera_position.z);
+		parentContext.controls.target.set(default_camera_target.x, default_camera_target.y, default_camera_target.z);
 		parentContext.controls.update();
+		xVelocityController.updateDisplay();
+		yVelocityController.updateDisplay();
+		yawVelocityController.updateDisplay();
 	});
 
 	// Add scene selection dropdown.
@@ -32,17 +39,17 @@ export function setupGUI(parentContext) {
 		"Unitree Go2": "unitree_go2/unitree_go2.xml",
 		"ANYbotics ANYmal B": "anybotics_anymal_b/anybotics_anymal_b.xml",
 		"ANYbotics ANYmal C": "anybotics_anymal_c/anybotics_anymal_c.xml",
-		"Google Barkour v0": "google_barkour_v0/google_barkour_v0.xml",
-		"Google Barkour vB": "google_barkour_vb/google_barkour_vb.xml",
+		// "Google Barkour v0": "google_barkour_v0/google_barkour_v0.xml",
+		// "Google Barkour vB": "google_barkour_vb/google_barkour_vb.xml",
 		"MAB Silver Badger": "mab_silver_badger/mab_silver_badger.xml",
-		"Petoi Bittle": "petoi_bittle/petoi_bittle.xml",
+		// "Petoi Bittle": "petoi_bittle/petoi_bittle.xml",
 		"Unitree H1": "unitree_h1/unitree_h1.xml",
-		"Unitree G1": "unitree_g1/unitree_g1.xml",
-		"PAL Robotics Talos": "pal_robotics_talos/pal_robotics_talos.xml",
+		// "Unitree G1": "unitree_g1/unitree_g1.xml",
+		// "PAL Robotics Talos": "pal_robotics_talos/pal_robotics_talos.xml",
 		"Robotis OP3": "robotis_op3/robotis_op3.xml",
-		"SoftBank Nao V5": "softbank_nao_v5/softbank_nao_v5.xml",
+		// "SoftBank Nao V5": "softbank_nao_v5/softbank_nao_v5.xml",
 		"Agility Robotics Cassie": "agility_robotics_cassie/agility_robotics_cassie.xml",
-		"Custom Hexapod": "hexapod/hexapod.xml",
+		// "Custom Hexapod": "hexapod/hexapod.xml",
 	}).name('Robot').onChange(reload);
 
 	// Add pause simulation checkbox.
@@ -81,23 +88,29 @@ export function setupGUI(parentContext) {
 	//  When pressed, resets the simulation to the initial state.
 	//  Can also be triggered by pressing backspace.
 	const resetSimulation = () => {
-		parentContext.camera.position.set(0.0, 1.4, 2.7);
-		parentContext.controls.target.set(0, 0, 0);
+		parentContext.camera.position.set(default_camera_position.x, default_camera_position.y, default_camera_position.z);
+		parentContext.controls.target.set(default_camera_target.x, default_camera_target.y, default_camera_target.z);
 		parentContext.controls.update();
 		parentContext.simulation.resetData();
 		parentContext.simulation.qpos.set(parentContext.model.key_qpos);
 		parentContext.simulation.forward();
+		parentContext.params.x_goal_velocity = 0.7;
+		parentContext.params.y_goal_velocity = 0.0;
+		parentContext.params.yaw_goal_velocity = 0.0;
+		xVelocityController.updateDisplay();
+		yVelocityController.updateDisplay();
+		yawVelocityController.updateDisplay();
 	};
 	parentContext.gui.add({ reset: () => { resetSimulation(); } }, 'reset').name('Reset');
 	document.addEventListener('keydown', (event) => {
 		if (event.code === 'Backspace') { resetSimulation(); event.preventDefault(); }
 	});
 
-	parentContext.gui.add(parentContext.params, 'x_goal_velocity', -1.0, 1.0).name('X Velocity');
-	parentContext.gui.add(parentContext.params, 'y_goal_velocity', -1.0, 1.0).name('Y Velocity');
-	parentContext.gui.add(parentContext.params, 'yaw_goal_velocity', -1.0, 1.0).name('Yaw Velocity');
+	const xVelocityController = parentContext.gui.add(parentContext.params, 'x_goal_velocity', -1.0, 1.0).name('X Velocity');
+	const yVelocityController = parentContext.gui.add(parentContext.params, 'y_goal_velocity', -1.0, 1.0).name('Y Velocity');
+	const yawVelocityController = parentContext.gui.add(parentContext.params, 'yaw_goal_velocity', -1.0, 1.0).name('Yaw Velocity');
 
-	// just add some text
+	parentContext.gui.add(parentContext.params, 'free_camera').name('Free Camera');
 	parentContext.gui.add({ text: 'Scroll Wheel' }, 'text').name('Zoom');
 	parentContext.gui.add({ text: 'Right Click + Drag' }, 'text').name('Move camera');
 	parentContext.gui.add({ text: 'Left Click + Drag' }, 'text').name('Pan camera');

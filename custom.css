@@ -99,9 +99,13 @@ p {
     align-items: center;
     text-decoration: none;
     border: 1px solid #333;
-    padding: 0.3em 1.6em;
+    padding: 0.3em 1.8em;
     border-radius: 0.6em;
     cursor: pointer;
+}
+
+.social-button:hover {
+    box-shadow: 0 0 0 0.1em #333;
 }
 
 .social-button:last-child {

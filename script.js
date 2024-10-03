@@ -3,6 +3,7 @@ import { GUI } from './node_modules/three/examples/jsm/libs/lil-gui.module.min.j
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 import { setupGUI, loadSceneFromURL, downloadRobotsFolder, getPosition, getQuaternion } from './mujocoUtils.js';
 import { create_robot_action_handlers } from './robot_action_handlers.js';
+import { default_camera_position, default_camera_target } from './camera_consts.js';
 import load_mujoco from "./mujoco_wasm/mujoco_wasm.js";
 
 // Load the MuJoCo Module
@@ -25,7 +26,7 @@ export class MuJoCoApp {
         this.state = new mujoco.State(this.model);
         this.simulation = new mujoco.Simulation(this.model, this.state);
 
-        this.params = { scene: initialScene, paused: false, x_goal_velocity: 0.0, y_goal_velocity: 0.0, yaw_goal_velocity: 0.0 };
+        this.params = { scene: initialScene, paused: false, free_camera: true, x_goal_velocity: 0.7, y_goal_velocity: 0.0, yaw_goal_velocity: 0.0 };
         this.mujoco_time = 0.0;
         this.bodies  = {}, this.lights = {};
         this.tmpVec  = new THREE.Vector3();
@@ -43,7 +44,7 @@ export class MuJoCoApp {
 
         this.camera = new THREE.PerspectiveCamera( 45, width / height, 0.001, 100 );
         this.camera.name = 'PerspectiveCamera';
-        this.camera.position.set(0.0, 1.4, 2.7);
+        this.camera.position.set(default_camera_position.x, default_camera_position.y, default_camera_position.z);
         this.scene.add(this.camera);
 
         this.scene.background = new THREE.Color(0.15, 0.25, 0.35);
@@ -64,7 +65,7 @@ export class MuJoCoApp {
         this.container.appendChild( this.renderer.domElement );
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        this.controls.target.set(0, 0, 0);
+        this.controls.target.set(default_camera_target.x, default_camera_target.y, default_camera_target.z);
         this.controls.panSpeed = 2;
         this.controls.zoomSpeed = 1;
         this.controls.enableDamping = true;
@@ -73,6 +74,8 @@ export class MuJoCoApp {
         this.controls.update();
 
         this.previous_scene = initialScene;
+        this.qpos_history = Array(100).fill().map(() => Array(3).fill(0));
+        this.previously_free_camera = this.params["free_camera"];
 
         window.addEventListener('resize', this.onWindowResize.bind(this));
     }
@@ -96,8 +99,27 @@ export class MuJoCoApp {
         this.controls.update();
 
         if (!this.params["paused"]) {
-            // this.controls.target.set(this.simulation.qpos[0], this.simulation.qpos[1], 0);
-            // this.controls.update();
+            if (!this.params["free_camera"]) {
+                let x_pos = this.simulation.qpos[0];
+                let y_pos = this.simulation.qpos[1];
+                let z_pos = this.simulation.qpos[2];
+                if (!this.previously_free_camera) {
+                    this.qpos_history.shift();
+                    this.qpos_history.push([x_pos, y_pos, z_pos]);
+                } else {
+                    this.qpos_history = Array(100).fill().map(() => [x_pos, y_pos, z_pos]);
+                }
+                let avg_x_pos = this.qpos_history.reduce((a, b) => a + b[0], 0) / this.qpos_history.length;
+                let avg_y_pos = this.qpos_history.reduce((a, b) => a + b[1], 0) / this.qpos_history.length;
+                let avg_z_pos = this.qpos_history.reduce((a, b) => a + b[2], 0) / this.qpos_history.length;
+                this.camera.position.x = avg_x_pos
+                this.camera.position.y = default_camera_position.y + avg_z_pos
+                this.camera.position.z = default_camera_position.z - avg_y_pos
+                this.controls.target.x = avg_x_pos
+                this.controls.target.y = default_camera_target.y + avg_z_pos
+                this.controls.target.z = default_camera_target.z - avg_y_pos
+                this.controls.update();
+            }
 
             let scene = this.params["scene"];
             let robot_action_handler = robot_action_handlers[scene];
@@ -109,6 +131,7 @@ export class MuJoCoApp {
             if (scene != this.previous_scene) {
                 robot_action_handler.reset();
                 this.previous_scene = scene;
+                this.qpos_history = Array(100).fill().map(() => Array(3).fill(0));
             }
 
             tf.tidy(() => {
@@ -125,7 +148,6 @@ export class MuJoCoApp {
                 this.mujoco_time += timestep * 1000.0;
             }
         }
-        this.simulation.forward();
 
         // Update body transforms.
         for (let b = 0; b < this.model.nbody; b++) {

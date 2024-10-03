@@ -41,11 +41,15 @@
             <div id="social-buttons">
                 <a href="https://github.com/nico-bohlinger/one_policy_to_run_them_all" target="_blank" class="social-button">
                     <i class="fa fa-github"></i>
-                    <p>GitHub</p>
+                    <p>Code</p>
                 </a>
                 <a href="https://www.ias.informatik.tu-darmstadt.de/uploads/Team/NicoBohlinger/one_policy_to_run_them_all.pdf" target="_blank" class="social-button">
                     <i class="fa fa-file-pdf"></i>
                     <p>Paper</p>
+                </a>
+                <a href="https://www.ias.informatik.tu-darmstadt.de/uploads/Team/NicoBohlinger/one_policy_to_run_them_all.pdf" target="_blank" class="social-button">
+                    <i class="fa fa-youtube"></i>
+                    <p>Video</p>
                 </a>
             </div>
 
@@ -56,7 +60,9 @@
             <div class="section-container">
                 <p class="section-header">Interactive Simulation</p>
                 <p class="section-text">
-                    Test our multi-embodiment policy trained with URMA on 16 robots interactively in the browser.
+                    Test our single multi-embodiment policy trained with URMA interactively in your browser.
+                    We provide 9 out of the 16 robots from the training set for you to try out.
+                    Use the controls panel to change the robot and the target velocities, use the camera controls to take a closer look and reset the simulation to put the robot back in its starting position.
                 </p>
             </div>
             <div id="canvas-container">
@@ -72,10 +78,21 @@
             </div>
 
             <div class="section-container">
-                <p class="section-header">Deployment on Robots from the Training Set</p>
+                <p class="section-header">Training in Simulation</p>
                 <p class="section-text">
-                    After training on 16 robots in simulation with extensive domain randomization, the policy is deployed on two of them in the real world.
+                    The URMA policy is trained in simulation on 16 different robots simultaneously.
+                    Its training set contains 9 quadrupeds, 6 bipeds / humanoids and 1 hexapod.
                 </p>
+                <video controls class="section-video">
+                    <source src="videos/real_world_seen_robots.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="section-container">
+                <p class="section-header">Deployment in the Real World</p>
+                <p class="section-text">
+                    After training in simulation, the policy is deployed on two quadruped robots from the training set in the real world.
+                    The extensive domain randomization during training enables the policy to be zero-shot transferred to real robots.
                 <video controls class="section-video">
                     <source src="videos/real_world_seen_robots.mp4" type="video/mp4">
                 </video>
@@ -84,7 +101,7 @@
             <div class="section-container">
                 <p class="section-header">Deployment on Unseen Robots</p>
                 <p class="section-text">
-                    Because of the big variety of robots in the training set, the randomization of their properties and the morphology-agnostic URMA architecture, the policy can generalize to real robots not seen during prior the simulation training.
+                    Through the big variety of robots in the training set, the randomization of their properties and the morphology-agnostic URMA architecture, the policy can generalize to new real robots not seen in the training process.
                 </p>
                 <video controls class="section-video">
                     <source src="videos/real_world_unseen_robots.mp4" type="video/mp4">
