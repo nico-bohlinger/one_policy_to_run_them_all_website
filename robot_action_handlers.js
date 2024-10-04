@@ -70,7 +70,7 @@ class RobotActionHandler {
 		for (let i = 0; i < 3; i++) {
 			trunk_angular_velocity[i] = Math.min(Math.max(trunk_angular_velocity[i] / 50.0, -1.0), 1.0);
 		}
-		let goal_velocity = new Float32Array([x_goal_velocity, y_goal_velocity, yaw_goal_velocity]);
+		let goal_velocity = new Float32Array([x_goal_velocity, -y_goal_velocity, -yaw_goal_velocity]);
 		let gravity_vector = new THREE.Vector3(0.0, 0.0, -1.0);
 		let projected_gravity_vector_three = gravity_vector.applyQuaternion(inverse_quat);
 		let projected_gravity_vector = new Float32Array([projected_gravity_vector_three.x, projected_gravity_vector_three.y, projected_gravity_vector_three.z]);

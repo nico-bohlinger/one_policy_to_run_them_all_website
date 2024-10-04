@@ -52,12 +52,8 @@ export function setupGUI(parentContext) {
 		// "Custom Hexapod": "hexapod/hexapod.xml",
 	}).name('Robot').onChange(reload);
 
-	// Add pause simulation checkbox.
-	// Parameters:
-	//  Under "Simulation" folder.
-	//  Name: "Pause Simulation".
-	//  When paused, a "pause" text in white is displayed in the top left corner.
-	//  Can also be triggered by pressing the spacebar.
+	const freeCamera = parentContext.gui.add(parentContext.params, 'free_camera').name('Free Camera');
+
 	const pauseSimulation = parentContext.gui.add(parentContext.params, 'paused').name('Pause Simulation');
 	pauseSimulation.onChange((value) => {
 		if (value) {
@@ -73,20 +69,7 @@ export function setupGUI(parentContext) {
 			parentContext.container.removeChild(parentContext.container.lastChild);
 		}
 	});
-	document.addEventListener('keydown', (event) => {
-		if (event.code === 'Space') {
-			parentContext.params.paused = !parentContext.params.paused;
-			pauseSimulation.setValue(parentContext.params.paused);
-			event.preventDefault();
-		}
-	});
 
-	// Add reset simulation button.
-	// Parameters:
-	//  Under "Simulation" folder.
-	//  Name: "Reset".
-	//  When pressed, resets the simulation to the initial state.
-	//  Can also be triggered by pressing backspace.
 	const resetSimulation = () => {
 		parentContext.camera.position.set(default_camera_position.x, default_camera_position.y, default_camera_position.z);
 		parentContext.controls.target.set(default_camera_target.x, default_camera_target.y, default_camera_target.z);
@@ -102,18 +85,69 @@ export function setupGUI(parentContext) {
 		yawVelocityController.updateDisplay();
 	};
 	parentContext.gui.add({ reset: () => { resetSimulation(); } }, 'reset').name('Reset');
+
 	document.addEventListener('keydown', (event) => {
 		if (event.code === 'Backspace') { resetSimulation(); event.preventDefault(); }
-	});
+
+		if (event.code === 'Space') {
+			parentContext.params.paused = !parentContext.params.paused;
+			pauseSimulation.setValue(parentContext.params.paused);
+			event.preventDefault();
+		}
+
+		if (event.code === 'KeyC') {
+			parentContext.params.free_camera = !parentContext.params.free_camera;
+			freeCamera.setValue(parentContext.params.free_camera);
+			event.preventDefault();
+		}
+
+		if (event.code === 'KeyW') {
+			parentContext.params.x_goal_velocity = Math.round(Math.min(Math.max(parentContext.params.x_goal_velocity + 0.1, -1.0), 1.0) * 10) / 10;
+			xVelocityController.updateDisplay();
+			event.preventDefault();
+		}
+		if (event.code === 'KeyS') {
+			parentContext.params.x_goal_velocity = Math.round(Math.min(Math.max(parentContext.params.x_goal_velocity - 0.1, -1.0), 1.0) * 10) / 10;
+			xVelocityController.updateDisplay();
+			event.preventDefault();
+		}
+		if (event.code === 'KeyA') {
+			parentContext.params.y_goal_velocity = Math.round(Math.min(Math.max(parentContext.params.y_goal_velocity - 0.1, -1.0), 1.0) * 10) / 10;
+			yVelocityController.updateDisplay();
+			event.preventDefault();
+		}
+		if (event.code === 'KeyD') {
+			parentContext.params.y_goal_velocity = Math.round(Math.min(Math.max(parentContext.params.y_goal_velocity + 0.1, -1.0), 1.0) * 10) / 10;
+			yVelocityController.updateDisplay();
+			event.preventDefault();
+		}
+		if (event.code === 'KeyQ') {
+			parentContext.params.yaw_goal_velocity = Math.round(Math.min(Math.max(parentContext.params.yaw_goal_velocity - 0.1, -1.0), 1.0) * 10) / 10;
+			yawVelocityController.updateDisplay();
+			event.preventDefault();
+		}
+		if (event.code === 'KeyE') {
+			parentContext.params.yaw_goal_velocity = Math.round(Math.min(Math.max(parentContext.params.yaw_goal_velocity + 0.1, -1.0), 1.0) * 10) / 10;
+			yawVelocityController.updateDisplay();
+			event.preventDefault();
+		}
+	}, true);
 
 	const xVelocityController = parentContext.gui.add(parentContext.params, 'x_goal_velocity', -1.0, 1.0).name('X Velocity');
 	const yVelocityController = parentContext.gui.add(parentContext.params, 'y_goal_velocity', -1.0, 1.0).name('Y Velocity');
 	const yawVelocityController = parentContext.gui.add(parentContext.params, 'yaw_goal_velocity', -1.0, 1.0).name('Yaw Velocity');
 
-	parentContext.gui.add(parentContext.params, 'free_camera').name('Free Camera');
-	parentContext.gui.add({ text: 'Scroll Wheel' }, 'text').name('Zoom');
-	parentContext.gui.add({ text: 'Right Click + Drag' }, 'text').name('Move camera');
-	parentContext.gui.add({ text: 'Left Click + Drag' }, 'text').name('Pan camera');
+	let controlHelpFolder = parentContext.gui.addFolder("Keyboard & Mouse Control Help");
+	controlHelpFolder.add({ text: 'C' }, 'text').name('Toggle free camera');
+	controlHelpFolder.add({ text: 'Space' }, 'text').name('Toggle pause');
+	controlHelpFolder.add({ text: 'Backspace' }, 'text').name('Reset simulation');
+	controlHelpFolder.add({ text: 'W, S' }, 'text').name('X Velocity');
+	controlHelpFolder.add({ text: 'A, D' }, 'text').name('Y Velocity');
+	controlHelpFolder.add({ text: 'Q, E' }, 'text').name('Yaw Velocity');
+	controlHelpFolder.add({ text: 'Scroll Wheel' }, 'text').name('Zoom free camera');
+	controlHelpFolder.add({ text: 'Right Click + Drag' }, 'text').name('Move free camera');
+	controlHelpFolder.add({ text: 'Left Click + Drag' }, 'text').name('Pan free camera');
+	controlHelpFolder.close();
 
 	parentContext.gui.open();
 }
