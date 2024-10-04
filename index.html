@@ -55,7 +55,7 @@
             </div>
 
             <div id="tldr-container">
-                <p id="tldr-text"><span id="tldr-first">TLDR:</span> We propose the Unified Robot Morphology Architecture (URMA) that can learn a single general locomotion policy for any legged robot embodiment and morphology.</p>
+                <p id="tldr-text"><span id="tldr-first">TLDR:</span> We propose the Unified Robot Morphology Architecture (URMA), capable of learning a single general locomotion policy for any legged robot embodiment and morphology.</p>
             </div>
             
             <div class="section-container">
@@ -76,8 +76,8 @@
                     To handle observations of any morphology, URMA splits observations into robot-specific and general parts.
                     Robot-specific observations are joint (and foot) observations.
                     They have the same structure but vary in their number depending on the robot.
-                    We can only use fixed length vectors in neural networks, so we want a mechanism that can take any joint observation and route it into a long latent vector that holds the information of all joints.
-                    For different robots, similar joints should be routed to similar parts of the latent.
+                    We can only use fixed length vectors in neural networks, so we need a mechanism that can take any joint observation and route it into a latent vector that holds the information of all joints.
+                    Similar joints from different robots should map to similar regions in the latent vector.
                 </p>
                 <img src="images/website_latent_routing.png" alt="URMA architecture" class="section-image">
                 <p class="section-text">
@@ -87,12 +87,12 @@
                 <img src="images/website_joint_description_observation.png" alt="URMA architecture" class="section-image">
                 <p class="section-sub-header">Attention Encoder</p>
                 <p class="section-text">
-                    In practice, URMA implements the observation routing with a simple attention encoder where the joint description vectors act as the keys and the joint observations as the values of the attention mechanism.
+                    In practice, URMA implements the observation routing with a simple attention encoder where the joint description vectors act as the keys and the joint observations as the values in the attention mechanism.
                 </p>
                 <img src="images/website_architecture_1.png" alt="URMA architecture" class="section-image">
                 <p class="section-sub-header">Core Network</p>
                 <p class="section-text">
-                    The same attention encoding is used for the foot observations and the resulting joint and feet latent vectors are concatenated with the general observations and passed to the policies big core network.
+                    The same attention encoding is used for the foot observations and the resulting joint and feet latent vectors are concatenated with the general observations and passed to the policy's core network.
                 </p>
                 <img src="images/website_architecture_2.png" alt="URMA architecture" class="section-image">
                 <p class="section-sub-header">Universal Decoder</p>
@@ -105,8 +105,7 @@
             <div class="section-container">
                 <p class="section-header">Training in Simulation</p>
                 <p class="section-text">
-                    The URMA policy is trained in simulation on 16 different robots simultaneously.
-                    Its training set contains 9 quadrupeds, 6 bipeds / humanoids and 1 hexapod.
+                    The URMA policy is trained in simulation across 16 different robots simultaneously, including 9 quadrupeds, 6 bipeds / humanoids and 1 hexapod.
                     The policy is trained with Proximal Policy Optimization (PPO) implemented in <a href="https://github.com/nico-bohlinger/RL-X" target="_blank">RL-X</a> for 100M simulation steps per robot.
                     In simulation, the trained policy outperforms classic multi-task RL approaches and shows strong robustness and zero-shot capabilities.
                 </p>
@@ -119,7 +118,7 @@
                 <p class="section-header">Deployment in the Real World</p>
                 <p class="section-text">
                     After training in simulation, the policy is deployed on two quadruped robots from the training set in the real world.
-                    The extensive domain randomization during training enables the policy to be directly transferred to real robots without any further adaptation.
+                    Extensive domain randomization during training allows the policy to transfer directly to real robots without any further adaptation.
                 <video controls class="section-video">
                     <source src="https://storage.googleapis.com/my_paper_bucket/real_world_seen_robots.mp4" type="video/mp4">
                 </video>
