@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import { GUI } from './node_modules/three/examples/jsm/libs/lil-gui.module.min.js';
-import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
+import { GUI } from '../node_modules/three/examples/jsm/libs/lil-gui.module.min.js';
+import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
 import { setupGUI, loadSceneFromURL, downloadRobotsFolder, getPosition, getQuaternion } from './mujocoUtils.js';
 import { create_robot_action_handlers } from './robot_action_handlers.js';
 import { default_camera_position, default_camera_target } from './camera_consts.js';
-import load_mujoco from "./mujoco_wasm/mujoco_wasm.js";
+import load_mujoco from "../mujoco_wasm/mujoco_wasm.js";
 
 // Load the MuJoCo Module
 const mujoco = await load_mujoco();
