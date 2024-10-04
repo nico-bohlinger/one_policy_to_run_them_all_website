@@ -138,6 +138,13 @@ p {
     font-weight: bold;
 }
 
+.section-sub-header {
+    font-size: larger;
+    font-weight: bold;
+    align-self: normal;
+    margin-top: 2em;
+}
+
 .section-text {
     margin-top: 1em;
 }
@@ -147,8 +154,13 @@ p {
 }
 
 .section-image {
-    margin-top: 1em;
+    margin-top: 2em;
     max-width: 100%;
+    margin-bottom: 1em;
+}
+
+.section-image:last-child {
+    margin-bottom: 2em;
 }
 
 .section-video {

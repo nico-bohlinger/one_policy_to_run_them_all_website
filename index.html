@@ -47,7 +47,7 @@
                     <i class="fa fa-file-pdf"></i>
                     <p>Paper</p>
                 </a>
-                <a href="https://www.ias.informatik.tu-darmstadt.de/uploads/Team/NicoBohlinger/one_policy_to_run_them_all.pdf" target="_blank" class="social-button">
+                <a href="https://youtu.be/BbbBAH-T7-Q" target="_blank" class="social-button">
                     <i class="fa fa-youtube"></i>
                     <p>Video</p>
                 </a>
@@ -62,7 +62,7 @@
                 <p class="section-text">
                     Test our single multi-embodiment policy trained with URMA interactively in your browser.
                     We provide 9 out of the 16 robots from the training set for you to try out.
-                    Use the controls panel to change the robot and the target velocities, use the camera controls to take a closer look and reset the simulation to put the robot back in its starting position.
+                    Videos of all robots and the real-world deployment can be found below.
                 </p>
             </div>
             <div id="canvas-container">
@@ -74,23 +74,31 @@
                 <p class="section-text">
                     To handle observations of any morphology, URMA splits observations into robot-specific and general parts.
                     Robot-specific observations are joint (and foot) observations.
-                    They have the same structure for all joints but vary in their number depending on the robot.
+                    They have the same structure but vary in their number depending on the robot.
                     We can only use fixed length vectors in neural networks, so we want a mechanism that can take any joint observation and route it into a long latent vector that holds the information of all joints.
+                    For different robots, similar joints should be routed to similar parts of the latent.
                 </p>
+                <img src="images/website_latent_routing.png" alt="URMA architecture" class="section-image">
                 <p class="section-text">
                     To do this routing, a "language" is needed that can describe a given joint such that the neural network can figure out where to put which joint observation in the latent vector.
-                    URMA uses joint description vectors made out of multiple characteristic joint properties like the joint’s rotation axis, its relative nominal position, velocity limits, control range, etc. to describe any given joint.
+                    URMA uses joint description vectors made out of multiple characteristic joint properties to describe any given joint.
                 </p>
+                <img src="images/website_joint_description_observation.png" alt="URMA architecture" class="section-image">
+                <p class="section-sub-header">Attention Encoder</p>
                 <p class="section-text">
                     In practice, URMA implements the observation routing with a simple attention encoder where the joint description vectors act as the keys and the joint observations as the values of the attention mechanism.
                 </p>
                 <img src="images/website_architecture_1.png" alt="URMA architecture" class="section-image">
+                <p class="section-sub-header">Core Network</p>
                 <p class="section-text">
                     The same attention encoding is used for the foot observations and the resulting joint and feet latent vectors are concatenated with the general observations and passed to the policies big core network.
                 </p>
                 <img src="images/website_architecture_2.png" alt="URMA architecture" class="section-image">
+                <p class="section-sub-header">Universal Decoder</p>
                 <p class="section-text">
                     Finally, we use our universal morphology decoder, which takes the output of the core network and pairs it with the batch of joint descriptions and single joint latents to produce the final action for given every joint.
+                </p>
+                <img src="images/website_architecture_3.png" alt="URMA architecture" class="section-image">
             </div>
 
             <div class="section-container">
