@@ -78,5 +78,3 @@ jspm_packages/
 #!node_modules/three/examples/jsm/utils/*
 #!node_modules/three/examples/jsm/loaders/
 #!node_modules/three/examples/jsm/loaders/*
-
-*.mp4
