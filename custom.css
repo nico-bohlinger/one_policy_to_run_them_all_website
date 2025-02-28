@@ -185,6 +185,23 @@ p {
     right: 0px;
 }
 
+.citation-container {
+    background-color: #f8f8f8;
+    padding: 1em 1em 0.3em 1em;
+    margin-top: 1em;
+    max-height: 200px;
+    max-width: -webkit-fill-available;
+    overflow: auto;
+}
+
+.citation-container pre,
+.citation-container code {
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+    line-height: 1.5;
+}
+
 #website-inspiration {
     margin-top: 3em;
     text-align: center;
